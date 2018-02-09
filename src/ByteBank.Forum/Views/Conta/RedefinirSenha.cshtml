@@ -1,0 +1,16 @@
+﻿@model ByteBank.Forum.ViewModels.ContaEsqueciMinhaSenhaViewModel
+
+@{
+    ViewBag.Title = "RedefinirSenha";
+}
+
+<h2>Redefinir senha</h2>
+
+@using (Html.BeginForm("RedefinirSenha","Conta"))
+{
+    @Html.ValidationSummary("", new { @class="text-danger" })
+
+    @Html.EditorForModel()
+
+    <input type="submit" value="Enviar" class="btn btn-default" /> 
+}

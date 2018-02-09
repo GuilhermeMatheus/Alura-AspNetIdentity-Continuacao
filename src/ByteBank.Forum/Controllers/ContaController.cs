@@ -181,6 +181,59 @@ namespace ByteBank.Forum.Controllers
             return View(modelo);
         }
 
+        public ActionResult RedefinirSenha()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> RedefinirSenha(ContaEsqueciMinhaSenhaViewModel modelo)
+        {
+            if (ModelState.IsValid)
+            {
+                var usuario = await UserManager.FindByEmailAsync(modelo.Email);
+                if (usuario != null)
+                {
+                    var token = await UserManager.GeneratePasswordResetTokenAsync(usuario.Id);
+                    var linkDeCallback =
+                        Url.Action(
+                            "ConfirmacaoRedefinirSenha",
+                            "Conta",
+                            new { usuarioId = usuario.Id, token = token },
+                            Request.Url.Scheme);
+
+                    await UserManager.SendEmailAsync(
+                        usuario.Id,
+                        "Fórum ByteBank - Confirmação de Email",
+                        $"Bem vindo ao fórum ByteBank, clique aqui {linkDeCallback} para confirmar seu email!");
+                }
+
+                return View("EmailRedefinirSenhaEnviado");
+            }
+
+            return View(modelo);
+        }
+
+        public ActionResult ConfirmacaoRedefinirSenha(string usuarioId, string token)
+        {
+            return View(new ContaConfirmacaoRedefinirSenhaViewModel { UsuarioId = usuarioId, Token = token });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> ConfirmacaoRedefinirSenha(ContaConfirmacaoRedefinirSenhaViewModel modelo)
+        {
+            if (ModelState.IsValid)
+            {
+                var resultado = await UserManager.ResetPasswordAsync(modelo.UsuarioId, modelo.Token, modelo.NovaSenha);
+                if (resultado.Succeeded)
+                    return RedirectToAction("Index", "Home");
+                else
+                    AdicionaErros(resultado);
+            }
+
+            return View(modelo);
+        }
+
         [HttpPost]
         public ActionResult Logoff()
         {
