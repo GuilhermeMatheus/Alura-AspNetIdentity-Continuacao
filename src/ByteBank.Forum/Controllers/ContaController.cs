@@ -230,8 +230,44 @@ namespace ByteBank.Forum.Controllers
                 else
                     AdicionaErros(resultado);
             }
-
+            
             return View(modelo);
+        }
+
+        [HttpPost]
+        public ActionResult AutenticacaoExterna(string provider)
+        {
+            SignInManager.AuthenticationManager.Challenge(new AuthenticationProperties
+            {
+                RedirectUri = Url.Action("AutenticacaoExternaCallback", new { provider })
+            }, provider);
+
+            return new HttpUnauthorizedResult();
+        }
+
+        public async Task<ActionResult> AutenticacaoExternaCallback(string provider)
+        {
+            var loginInfo = await SignInManager.AuthenticationManager.GetExternalLoginInfoAsync();
+            var resultadoSignIn = await SignInManager.ExternalSignInAsync(loginInfo, true);
+
+            switch (resultadoSignIn)
+            {
+                case SignInStatus.Success:
+                    return RedirectToAction("Index", "Home");
+                default:
+                    //TODO: mudar esse fluxo
+                    var usuario = await UserManager.FindByEmailAsync(loginInfo.Email);
+                    var usuarioJaExiste = usuario != null;
+
+                    if (usuarioJaExiste)
+                    {
+                        var resultadoAddLogin = await UserManager.AddLoginAsync(usuario.Id, loginInfo.Login);
+                        return await AutenticacaoExternaCallback(provider);
+                    }
+                    break;
+            }
+
+            return View("Error");
         }
 
         [HttpPost]

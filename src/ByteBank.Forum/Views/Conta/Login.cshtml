@@ -1,4 +1,6 @@
-﻿@model ByteBank.Forum.ViewModels.ContaLoginViewModel
+﻿@using Microsoft.Owin.Security
+
+@model ByteBank.Forum.ViewModels.ContaLoginViewModel
 
 @{
     ViewBag.Title = "Login";
@@ -18,4 +20,20 @@
 
 <p>
     Esqueceu a senha? Clique @Html.ActionLink("aqui", "RedefinirSenha", "Conta") para redefinir sua senha.
-</p> 
+</p>
+
+@{
+    var providers = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+    if (providers != null && providers.Any())
+    {
+        using (Html.BeginForm("AutenticacaoExterna", "Conta", FormMethod.Post))
+        {
+            foreach (var provider in providers)
+            {
+                <button class="btn" value="@provider.AuthenticationType" name="provider" type="submit">
+                    @provider.Caption
+                </button>
+            }
+        }
+    }
+}

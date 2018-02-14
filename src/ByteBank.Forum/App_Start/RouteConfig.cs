@@ -18,6 +18,12 @@ namespace ByteBank.Forum
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
+
+            routes.MapRoute(
+                name: "signin-google",
+                url: "signin-google",
+                defaults: new { controller = "Conta", action = "AutenticacaoExternaCallback" }
+            );
         }
     }
 }

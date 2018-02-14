@@ -5,9 +5,11 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.Google;
 using Owin;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
@@ -78,6 +80,19 @@ namespace ByteBank.Forum
             builder.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                  AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie
+            });
+
+            builder.UseTwoFactorSignInCookie(DefaultAuthenticationTypes.TwoFactorCookie, TimeSpan.FromMinutes(5));
+            builder.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
+
+            builder.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+
+            builder.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions
+            {
+                ClientId = ConfigurationManager.AppSettings["googlePlusAPI:client_id"],
+                ClientSecret = ConfigurationManager.AppSettings["googlePlusAPI:client_secret"],
+                Caption = "Google"
+                //CallbackPath = new PathString("/Conta/AutenticacaoExternaCallback")
             });
         }
     }
