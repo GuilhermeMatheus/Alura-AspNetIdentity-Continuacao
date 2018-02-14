@@ -204,8 +204,8 @@ namespace ByteBank.Forum.Controllers
 
                     await UserManager.SendEmailAsync(
                         usuario.Id,
-                        "Fórum ByteBank - Confirmação de Email",
-                        $"Bem vindo ao fórum ByteBank, clique aqui {linkDeCallback} para confirmar seu email!");
+                        "Fórum ByteBank - Redefinir senha",
+                        $"Clique aqui {linkDeCallback} para mudar sua senha no fórum ByteBank!");
                 }
 
                 return View("EmailRedefinirSenhaEnviado");
