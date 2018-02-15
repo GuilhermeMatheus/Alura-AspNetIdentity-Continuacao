@@ -180,6 +180,7 @@
     <Compile Include="App_Start\Identity\EmailServico.cs" />
     <Compile Include="App_Start\Identity\SenhaValidador.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AdministracaoController.cs" />
     <Compile Include="Controllers\ContaController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TopicoController.cs" />
@@ -239,6 +240,7 @@
     <Content Include="Views\Conta\EmailRedefinirSenhaEnviado.cshtml" />
     <Content Include="Views\Conta\RedefinirSenha.cshtml" />
     <Content Include="Views\Conta\ConfirmacaoRedefinirSenha.cshtml" />
+    <Content Include="Views\Administracao\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
