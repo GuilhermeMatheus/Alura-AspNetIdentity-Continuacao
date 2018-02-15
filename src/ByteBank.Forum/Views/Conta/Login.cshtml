@@ -26,7 +26,7 @@
     var providers = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
     if (providers != null && providers.Any())
     {
-        using (Html.BeginForm("AutenticacaoExterna", "Conta", FormMethod.Post))
+        using (Html.BeginForm("LoginPorAutenticacaoExterna", "Conta", FormMethod.Post))
         {
             foreach (var provider in providers)
             {

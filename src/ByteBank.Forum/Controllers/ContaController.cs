@@ -130,7 +130,7 @@ namespace ByteBank.Forum.Controllers
                 return View("Error");
         }
         
-        public async Task<ActionResult> Login()
+        public ActionResult Login()
         {
             return View();
         }
@@ -254,6 +254,31 @@ namespace ByteBank.Forum.Controllers
             }, provider);
 
             return new HttpUnauthorizedResult();
+        }
+
+        [HttpPost]
+        public ActionResult LoginPorAutenticacaoExterna(string provider)
+        {
+            SignInManager.AuthenticationManager.Challenge(new AuthenticationProperties
+            {
+                RedirectUri = Url.Action("LoginPorAutenticacaoExternaCallback", new { provider })
+            }, provider);
+
+            return new HttpUnauthorizedResult();
+        }
+
+        public async Task<ActionResult> LoginPorAutenticacaoExternaCallback(string provider)
+        {
+            var loginInfo = await SignInManager.AuthenticationManager.GetExternalLoginInfoAsync();
+            var resultadoSignIn = await SignInManager.ExternalSignInAsync(loginInfo, true);
+
+            switch (resultadoSignIn)
+            {
+                case SignInStatus.Success:
+                    return RedirectToAction("Index", "Home");
+                default:
+                    return View("Error");
+            }
         }
 
         public async Task<ActionResult> RegistrarComProviderExternoCallback(string provider)
