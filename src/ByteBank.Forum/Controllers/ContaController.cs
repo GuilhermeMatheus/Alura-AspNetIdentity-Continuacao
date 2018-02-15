@@ -245,9 +245,51 @@ namespace ByteBank.Forum.Controllers
             return new HttpUnauthorizedResult();
         }
 
+        [HttpPost]
+        public ActionResult RegistrarComProviderExterno(string provider)
+        {
+            SignInManager.AuthenticationManager.Challenge(new AuthenticationProperties
+            {
+                RedirectUri = Url.Action("RegistrarComProviderExternoCallback", new { provider })
+            }, provider);
+
+            return new HttpUnauthorizedResult();
+        }
+
+        public async Task<ActionResult> RegistrarComProviderExternoCallback(string provider)
+        {
+            var loginInfo = await SignInManager.AuthenticationManager.GetExternalLoginInfoAsync();
+
+            var usuario = await UserManager.FindByEmailAsync(loginInfo.Email);
+            var usuarioJaExiste = usuario != null;
+
+            if (usuarioJaExiste)
+                return View("Error");
+
+            var novoUsuario = new UsuarioAplicacao();
+            
+            novoUsuario.Email = loginInfo.Email;
+            novoUsuario.UserName = loginInfo.Email;
+            novoUsuario.NomeCompleto = loginInfo.ExternalIdentity.FindFirstValue(loginInfo.ExternalIdentity.NameClaimType);
+            
+            var resultado = await UserManager.CreateAsync(novoUsuario);
+
+            if (resultado.Succeeded)
+            {
+                var resultadoAddLogin = await UserManager.AddLoginAsync(novoUsuario.Id, loginInfo.Login);
+                if (resultadoAddLogin.Succeeded)
+                    return RedirectToAction("Index", "Home");
+            }
+
+            return View("Error");
+        }
+
         public async Task<ActionResult> AutenticacaoExternaCallback(string provider)
         {
             var loginInfo = await SignInManager.AuthenticationManager.GetExternalLoginInfoAsync();
+
+
+
             var resultadoSignIn = await SignInManager.ExternalSignInAsync(loginInfo, true);
 
             switch (resultadoSignIn)
