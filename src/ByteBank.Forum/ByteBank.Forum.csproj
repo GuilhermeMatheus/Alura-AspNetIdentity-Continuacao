@@ -189,6 +189,7 @@
     </Compile>
     <Compile Include="Models\UsuarioAplicacao.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RolesAplicacao.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\ContaConfirmacaoRedefinirSenhaViewModel.cs" />
     <Compile Include="ViewModels\ContaEsqueciMinhaSenhaViewModel.cs" />

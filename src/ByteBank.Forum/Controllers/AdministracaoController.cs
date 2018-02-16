@@ -6,12 +6,11 @@ using System.Web.Mvc;
 
 namespace ByteBank.Forum.Controllers
 {
-    [Authorize(Roles ="Administrador")]
+    [Authorize(Roles =RolesAplicacao.ADMINISTRADOR)]
     public class AdministracaoController : Controller
     {
         public ActionResult Index()
         {
-            System.Security.Claims.ClaimTypes.Name
             return View();
         }
     }

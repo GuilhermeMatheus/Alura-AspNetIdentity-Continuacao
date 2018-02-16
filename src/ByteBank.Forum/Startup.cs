@@ -92,8 +92,51 @@ namespace ByteBank.Forum
                 ClientId = ConfigurationManager.AppSettings["googlePlusAPI:client_id"],
                 ClientSecret = ConfigurationManager.AppSettings["googlePlusAPI:client_secret"],
                 Caption = "Google"
-                //CallbackPath = new PathString("/Conta/AutenticacaoExternaCallback")
             });
+
+            using (var dbContext = new IdentityDbContext<UsuarioAplicacao>("DefaultConnection"))
+            {
+                CriarRoles(dbContext);
+                CriarAdministradorPadrao(dbContext);
+            }
+        }
+
+        private void CriarRoles(IdentityDbContext<UsuarioAplicacao> dbContext)
+        {
+            using (var roleStore = new RoleStore<IdentityRole>(dbContext))
+            using (var roleManager = new RoleManager<IdentityRole>(roleStore))
+            {
+                if (!roleManager.RoleExists(RolesAplicacao.ADMINISTRADOR))
+                    roleManager.Create(new IdentityRole(RolesAplicacao.ADMINISTRADOR));
+
+                if (!roleManager.RoleExists(RolesAplicacao.MODERADOR))
+                    roleManager.Create(new IdentityRole(RolesAplicacao.MODERADOR));
+            }
+        }
+
+        private void CriarAdministradorPadrao(IdentityDbContext<UsuarioAplicacao> dbContext)
+        {
+            using (var userStore = new UserStore<UsuarioAplicacao>(dbContext))
+            using (var userManager = new UserManager<UsuarioAplicacao>(userStore))
+            {
+                var administrador = userManager.FindByEmail(ConfigurationManager.AppSettings["adminPadrao:email"]);
+                var naoExisteAdministrador = administrador == null;
+
+                if (naoExisteAdministrador)
+                {
+                    administrador = new UsuarioAplicacao
+                    {
+                        NomeCompleto = "Administrador",
+                        Email = ConfigurationManager.AppSettings["adminPadrao:email"],
+                        UserName = ConfigurationManager.AppSettings["adminPadrao:username"],
+                        EmailConfirmed = true
+                    };
+
+                    userManager.Create(administrador, ConfigurationManager.AppSettings["adminPadrao:senha"]);
+
+                    userManager.AddToRole(administrador.Id, RolesAplicacao.ADMINISTRADOR);
+                }
+            }
         }
     }
 }
