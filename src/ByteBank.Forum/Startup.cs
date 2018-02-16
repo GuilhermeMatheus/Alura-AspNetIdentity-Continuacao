@@ -32,6 +32,21 @@ namespace ByteBank.Forum
                     return new UserStore<UsuarioAplicacao>(dbContext);
                 });
 
+            builder.CreatePerOwinContext<IRoleStore<IdentityRole, string>>(
+                (opcoes, contextoOwin) =>
+                {
+                    var dbContext = contextoOwin.Get<DbContext>();
+                    return new RoleStore<IdentityRole>(dbContext);
+                });
+
+            builder.CreatePerOwinContext<RoleManager<IdentityRole>>(
+                (opcoes, contextoOwin) =>
+                {
+                    var roleStore = contextoOwin.Get<IRoleStore<IdentityRole, string>>();
+                    return new RoleManager<IdentityRole>(roleStore);
+                });
+
+
             builder.CreatePerOwinContext<UserManager<UsuarioAplicacao>>(
                 (opcoes, contextoOwin) =>
                 {

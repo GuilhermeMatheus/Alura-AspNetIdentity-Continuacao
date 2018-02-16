@@ -184,6 +184,7 @@
     <Compile Include="Controllers\ContaController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TopicoController.cs" />
+    <Compile Include="Controllers\UsuariosController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -196,6 +197,8 @@
     <Compile Include="ViewModels\ContaLoginViewModel.cs" />
     <Compile Include="ViewModels\ContaRegistrarViewModel.cs" />
     <Compile Include="ViewModels\TopicoCriarViewModel.cs" />
+    <Compile Include="ViewModels\UsuariosEditarRolesViewModel.cs" />
+    <Compile Include="ViewModels\UsuarioViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
@@ -242,6 +245,9 @@
     <Content Include="Views\Conta\RedefinirSenha.cshtml" />
     <Content Include="Views\Conta\ConfirmacaoRedefinirSenha.cshtml" />
     <Content Include="Views\Administracao\Index.cshtml" />
+    <Content Include="Views\Usuarios\Index.cshtml" />
+    <Content Include="Views\Usuarios\EditarRoles.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\RoleViewModel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,12 @@
+﻿@model ByteBank.Forum.ViewModels.RoleViewModel
+
+@Html.HiddenFor(model => model.Id)
+@Html.HiddenFor(model => model.Nome)
+<tr>
+    <td style="text-align:center">
+        @Html.CheckBoxFor(model => model.Selecionado)
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.Nome)
+    </td>
+</tr>

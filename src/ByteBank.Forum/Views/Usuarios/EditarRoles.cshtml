@@ -1,0 +1,44 @@
+﻿@model ByteBank.Forum.ViewModels.UsuariosEditarRolesViewModel
+
+@{
+    ViewBag.Title = "EditarRoles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Funções do usuário @Html.DisplayFor(model => model.UserName)</h2>
+<h5>@Html.DisplayFor(model => model.Email)</h5>
+<hr />
+
+
+@using (Html.BeginForm("EditarRoles", "Usuarios", FormMethod.Post))
+{
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.UserName)
+
+        <h4>Selecione as funções </h4>
+        <br />
+        <hr />
+
+        <table>
+            <tr>
+                <th>
+                    Selecionar
+                </th>
+                <th>
+                    Função
+                </th>
+            </tr>
+            @Html.EditorFor(model => model.Roles)
+        </table>
+        <br />
+        <hr />
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Salvar" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+

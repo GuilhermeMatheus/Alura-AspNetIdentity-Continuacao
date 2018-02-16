@@ -1,0 +1,29 @@
+﻿@model IEnumerable<ByteBank.Forum.ViewModels.UsuarioViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Usuários</h2>
+
+<table class="table">
+    <tr>
+        <th>Nome</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>@item.NomeCompleto</td>
+        <td>@item.Username</td>
+        <td>@item.Email</td>
+        <td>
+            @Html.ActionLink("Editar funções", "EditarRoles", new { id = item.Id }) |
+        </td>
+    </tr>
+}
+
+</table>
