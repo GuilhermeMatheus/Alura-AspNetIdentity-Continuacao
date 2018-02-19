@@ -84,15 +84,34 @@ namespace ByteBank.Forum.Controllers
                 var usuario = UserManager.FindByName(modelo.UserName);
 
                 var todasAsRoles = await UserManager.GetRolesAsync(usuario.Id);
-                await UserManager.RemoveFromRolesAsync(usuario.Id, todasAsRoles.ToArray());
+                var resultadoRemoveRoles = 
+                    await UserManager.RemoveFromRolesAsync(usuario.Id, todasAsRoles.ToArray());
 
-                var novasRoles = modelo.Roles.Where(funcao => funcao.Selecionado).Select(funcao => funcao.Nome);
-                await UserManager.AddToRolesAsync(usuario.Id, novasRoles.ToArray());
+                if (resultadoRemoveRoles.Succeeded)
+                {
+                    var novasRoles = modelo.Roles.Where(funcao => funcao.Selecionado).Select(funcao => funcao.Nome);
+                    var resultadoAdicionaRoles =
+                        await UserManager.AddToRolesAsync(usuario.Id, novasRoles.ToArray());
 
-                return RedirectToAction("Index");
+                    if (resultadoAdicionaRoles.Succeeded)
+                        return RedirectToAction("Index");
+                    else
+                        AdicionaErros(resultadoAdicionaRoles);
+                }
+                else
+                {
+                    AdicionaErros(resultadoRemoveRoles);
+                }
+
+                return await EditarRoles(usuario.Id);
             }
-            return View();
+            return View(modelo);
         }
 
+        private void AdicionaErros(IdentityResult resultado)
+        {
+            foreach (var erro in resultado.Errors)
+                ModelState.AddModelError("", erro);
+        }
     }
 }
