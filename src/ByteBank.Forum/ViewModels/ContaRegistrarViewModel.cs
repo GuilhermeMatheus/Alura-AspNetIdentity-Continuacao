@@ -22,5 +22,8 @@ namespace ByteBank.Forum.ViewModels
         [Required]
         [DataType(DataType.Password)]
         public string Senha { get; set; }
+
+        [DataType(DataType.PhoneNumber)]
+        public string Celular { get; set; }
     }
 }

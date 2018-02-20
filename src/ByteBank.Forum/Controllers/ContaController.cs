@@ -75,6 +75,7 @@ namespace ByteBank.Forum.Controllers
                 novoUsuario.Email = modelo.Email;
                 novoUsuario.UserName = modelo.UserName;
                 novoUsuario.NomeCompleto = modelo.NomeCompleto;
+                novoUsuario.PhoneNumber = modelo.Celular;
 
                 var usuario = await UserManager.FindByEmailAsync(modelo.Email);
                 var usuarioJaExiste = usuario != null;
@@ -88,6 +89,14 @@ namespace ByteBank.Forum.Controllers
                 {
                     // Enviar o email de confirmação
                     await EnviarEmailDeConfirmacaoAsync(novoUsuario);
+
+                    if (!string.IsNullOrEmpty(modelo.Celular))
+                    {
+                        await EnviarSmsDeConfirmacaoAsync(novoUsuario);
+                        ViewBag.UsuarioId = novoUsuario.Id;
+                        return View("AguardandoConfirmacaoEmailSms");
+                    }
+
                     return View("AguardandoConfirmacao");
                 }
                 else
@@ -115,6 +124,33 @@ namespace ByteBank.Forum.Controllers
                 usuario.Id,
                 "Fórum ByteBank - Confirmação de Email",
                 $"Bem vindo ao fórum ByteBank, clique aqui {linkDeCallback} para confirmar seu email!");
+        }
+        private async Task EnviarSmsDeConfirmacaoAsync(UsuarioAplicacao usuario)
+        {
+            var token = await UserManager.GenerateChangePhoneNumberTokenAsync(usuario.Id, usuario.PhoneNumber);
+
+            await UserManager.SendSmsAsync(
+                usuario.Id, 
+                $"Confirme sua conta no Fórum ByteBank com o código {token}.");
+        }
+
+        public async Task<ActionResult> ConfirmacaoSms(string usuarioId, string token)
+        {
+            if (usuarioId == null || token == null)
+                return View("Error");
+
+            var usuario = await UserManager.FindByIdAsync(usuarioId);
+            if (usuario == null)
+                return View("Error");
+
+            var resultado = await UserManager.ChangePhoneNumberAsync(usuarioId, usuario.PhoneNumber, token);
+
+            if (resultado.Succeeded && usuario.EmailConfirmed)
+                return RedirectToAction("Index", "Home");
+            else if (resultado.Succeeded && !usuario.EmailConfirmed)
+                return View("AguardandoConfirmacao");
+            else
+                return View("Error");
         }
 
         public async Task<ActionResult> ConfirmacaoEmail(string usuarioId, string token)

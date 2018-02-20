@@ -1,0 +1,21 @@
+﻿
+@{
+    ViewBag.Title = "AguardandoConfirmacaoEmailSms";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Bem vindo ao fórum ByteBank</h2>
+<p> Por favor, verifique sua caixa de entrada para confirmar o seu email!</p>
+
+<hr />
+
+<p> Enquanto isto, digite aqui o código que você recebeu por SMS!</p>
+@using (Html.BeginForm("ConfirmacaoSms", "Conta", FormMethod.Post))
+{
+    @Html.Hidden("usuarioId", (string)ViewBag.UsuarioId)
+
+    <label> Código SMS</label>
+    <input type="text" name="token" />
+
+    <input type="submit" class="btn btn-default" value="Enviar" />
+}
