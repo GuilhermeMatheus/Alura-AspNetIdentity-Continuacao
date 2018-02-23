@@ -68,6 +68,14 @@ namespace ByteBank.Forum.Controllers
         [HttpPost]
         public async Task<ActionResult> Registrar(ContaRegistrarViewModel modelo)
         {
+            var numeroDeCelularVazio = string.IsNullOrEmpty(modelo.Celular);
+
+            if (modelo.UsarAutenticacaoDeDoisPassos && numeroDeCelularVazio)
+            {
+                ModelState.AddModelError("Celular", "Número de celular obrigatório quando autenticação de dois passos habilitado");
+                return View(modelo);
+            }
+
             if(ModelState.IsValid)
             {
                 var novoUsuario = new UsuarioAplicacao();
@@ -76,6 +84,7 @@ namespace ByteBank.Forum.Controllers
                 novoUsuario.UserName = modelo.UserName;
                 novoUsuario.NomeCompleto = modelo.NomeCompleto;
                 novoUsuario.PhoneNumber = modelo.Celular;
+                novoUsuario.TwoFactorEnabled = modelo.UsarAutenticacaoDeDoisPassos;
 
                 var usuario = await UserManager.FindByEmailAsync(modelo.Email);
                 var usuarioJaExiste = usuario != null;
@@ -197,6 +206,11 @@ namespace ByteBank.Forum.Controllers
                             return View("AguardandoConfirmacao");
                         }
                         return RedirectToAction("Index", "Home");
+
+                    case SignInStatus.RequiresVerification:
+                        await SignInManager.SendTwoFactorCodeAsync("SMS");
+                        return View("AutenticacaoDeDoisFatores");
+
                     case SignInStatus.LockedOut:
                         var senhaCorreta = 
                             await UserManager.CheckPasswordAsync(
@@ -215,6 +229,27 @@ namespace ByteBank.Forum.Controllers
 
             // Algo de errado aconteceu
             return View(modelo);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AutenticacaoDeDoisFatores(ContaAutenticacaoDeDoisFatoresViewModel modelo)
+        {
+            if (ModelState.IsValid)
+            {
+                var signInResultado = 
+                    await SignInManager.TwoFactorSignInAsync(
+                        "SMS",
+                        modelo.Codigo,
+                        isPersistent: modelo.ContinuarLogado,
+                        rememberBrowser: modelo.LembrarNavegador);
+
+                if (signInResultado == SignInStatus.Success)
+                    return RedirectToAction("Index", "Home");
+
+                ModelState.AddModelError("", "Código inválido");
+            }
+
+            return View();
         }
 
         public ActionResult RedefinirSenha()

@@ -25,5 +25,8 @@ namespace ByteBank.Forum.ViewModels
 
         [DataType(DataType.PhoneNumber)]
         public string Celular { get; set; }
+
+        [Display(Name = "Usar autenticação de dois passos")]
+        public bool UsarAutenticacaoDeDoisPassos { get; set; }
     }
 }

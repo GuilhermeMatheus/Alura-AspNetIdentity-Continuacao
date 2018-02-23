@@ -69,6 +69,13 @@ namespace ByteBank.Forum
                     userManager.EmailService = new EmailServico();
                     userManager.SmsService = new TwilioSmsServico();
 
+                    userManager.RegisterTwoFactorProvider(
+                        "SMS",
+                        new PhoneNumberTokenProvider<UsuarioAplicacao>
+                        {
+                            MessageFormat = "Token: {0}"
+                        });
+
                     var dataProtectionProvider = opcoes.DataProtectionProvider;
                     var dataProtectionProviderCreated = dataProtectionProvider.Create("ByteBank.Forum");
 
